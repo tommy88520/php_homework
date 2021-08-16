@@ -1,7 +1,6 @@
 <?php
 include __DIR__ . '/partials/init.php';
-$title = '會員中心後台';
-$activeLi = 'tommy';
+$title = '資料列表';
 
 // 固定每一頁最多幾筆
 $perPage = 5;
@@ -18,7 +17,7 @@ $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 $where = ' WHERE 1 ';
 if (!empty($keyword)) {
     // $where .= " AND `name` LIKE '%{$keyword}%' "; // sql injection 漏洞
-    $where .= sprintf(" AND `name` LIKE %s ", $pdo->quote('%' . $keyword . '%'));
+    $where .= sprintf(" AND `account` LIKE %s ", $pdo->quote('%' . $keyword . '%'));
 
     $qs['keyword'] = $keyword;
 }
@@ -58,27 +57,6 @@ if ($totalRows != 0) {
 <?php include __DIR__ . '/partials/html-head.php'; ?>
 <?php include __DIR__ . '/partials/navbar.php'; ?>
 <style>
-    .basic_container {
-        width: 100%;
-    }
-
-    .mypage_outsidebar {
-        width: 20%;
-
-    }
-
-    .mypage_insidebar {
-        border: 1px solid black;
-        width: 100%;
-        height: 300px;
-    }
-
-    .mypage_main {
-        border: 1px solid black;
-        width: 65%;
-        height: 752px;
-    }
-
     table tbody i.fas.fa-trash-alt {
         color: darkred;
     }
@@ -87,17 +65,11 @@ if ($totalRows != 0) {
         color: darkorange;
         cursor: pointer;
     }
-
-    .account_bar {
-        width: 70%;
-    }
 </style>
-<div class="container mt-3">
-
-
+<div class="container">
     <div class="row">
         <div class="col">
-            <form action="002-tommy_account_list.php" class="form-inline my-2 my-lg-0 d-flex justify-content-end">
+            <form action="002-tommy_account-list.php" class="form-inline my-2 my-lg-0 d-flex justify-content-end">
                 <input class="form-control mr-sm-2" type="search" name="keyword" placeholder="Search" value="<?= htmlentities($keyword) ?>" aria-label="Search">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
             </form>
@@ -107,12 +79,14 @@ if ($totalRows != 0) {
         <div class="col">
             <nav aria-label="Page navigation example">
                 <ul class="pagination d-flex justify-content-end">
+
                     <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">
                         <a class="page-link" href="?<?php $qs['page'] = $page - 1;
                                                     echo http_build_query($qs); ?>">
                             <i class="fas fa-arrow-circle-left"></i>
                         </a>
                     </li>
+
                     <?php for ($i = $page - 5; $i <= $page + 5; $i++) :
                         if ($i >= 1 and $i <= $totalPages) :
                             $qs['page'] = $i;
@@ -122,6 +96,7 @@ if ($totalRows != 0) {
                             </li>
                     <?php endif;
                     endfor; ?>
+
                     <li class="page-item <?= $page >= $totalPages ? 'disabled' : '' ?>">
                         <a class="page-link" href="?<?php $qs['page'] = $page + 1;
                                                     echo http_build_query($qs); ?>">
@@ -130,6 +105,7 @@ if ($totalRows != 0) {
                     </li>
                 </ul>
             </nav>
+
         </div>
     </div>
     <div class="row">
@@ -137,7 +113,7 @@ if ($totalRows != 0) {
             <table class="table table-striped table-bordered">
                 <thead>
                     <tr>
-                        <th scope="col"><i class="fas fa-trash-alt"></i></th>
+                    <th scope="col"><i class="fas fa-trash-alt"></i></th>
                         <th scope="col"><i class="fas fa-trash-alt"> ajax</i></th>
                         <th scope="col">id</th>
                         <th scope="col">account</th>
@@ -168,9 +144,6 @@ if ($totalRows != 0) {
                             <td><?= htmlentities($r['address']) ?></td>
                             <td><?= htmlentities($r['birthday']) ?></td>
                             <td><?= htmlentities($r['nickname']) ?></td>
-                            <!--
-                            <td><?= strip_tags($r['address']) ?></td>
-                            -->
                             <td>
                                 <a href="002-tommy_account_edit.php?id=<?= $r['id'] ?>">
                                     <i class="fas fa-edit"></i>
@@ -180,8 +153,11 @@ if ($totalRows != 0) {
                     <?php endforeach; ?>
                 </tbody>
             </table>
+
         </div>
     </div>
+
+
 </div>
 
 <!-- Modal -->
@@ -255,5 +231,5 @@ if ($totalRows != 0) {
     modal.on('show.bs.modal', function(event) {
         // console.log(event.target);
     });
-    <?php include __DIR__ . '/partials/scripts.php'; ?>
-    <?php include __DIR__ . '/partials/html-foot.php'; ?>
+</script>
+<?php include __DIR__ . '/partials/html-foot.php'; ?>

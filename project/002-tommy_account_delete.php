@@ -1,12 +1,16 @@
 <?php
 include __DIR__ . '/partials/init.php';
-$title = 'Hi Emma!!';
-$activeLi = 'emma';
-?>
-<?php include __DIR__ . '/partials/html-head.php';?>
-<?php include __DIR__ . '/partials/navbar.php';?>
-<div class="container mt-3">
-    <h2>Hi Emma!! <a href="001-emma-api.php">Click me!</a> ☜(ﾟヮﾟ☜)</h2>
-</div>
-<?php include __DIR__ . '/partials/scripts.php';?>
-<?php include __DIR__ . '/partials/html-foot.php';?>
+
+$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+if(! empty($id)){
+    $sql = "DELETE FROM `members` WHERE id=$id";
+    $stmt = $pdo->query($sql);
+}
+
+// $_SERVER['HTTP_REFERER'] 從哪個頁面連過來的
+// 不一定有資料
+if(isset($_SERVER['HTTP_REFERER'])){
+    header("Location: ". $_SERVER['HTTP_REFERER']);
+} else {
+    header('Location: 002-tommy_account_list.php');
+}
