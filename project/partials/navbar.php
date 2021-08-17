@@ -2,7 +2,8 @@
     <div class="container">
         <!-- NOTE -->
         <a class="navbar-brand" href="index_.php">Team &#923;</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -15,27 +16,31 @@
                 </li>
 
                 <!-- 001 Emma -->
-                <li class="nav-item  <?= $activeLi == 'emma' ? 'active' : '' ?>">
-                    <a class="nav-link" href="001-emma.php">Emma</a>
+                <li class="nav-item  <?=$activeLi == 'emma' ? 'active' : ''?>">
+                    <a class="nav-link" href="001-emma-blog-list.php">Emma</a>
                 </li>
 
                 <!-- 002 Tommy -->
-                <li class="nav-item  <?= $activeLi == 'tommy' ? 'active' : '' ?>">
+                <li class="nav-item  <?=$activeLi == 'tommy' ? 'active' : ''?>">
                     <a class="nav-link" href="002-tommy.php">Tommy</a>
                 </li>
 
+                <li class="nav-item  <?=$activeLi == 'tommy' ? 'active' : ''?>">
+                    <a class="nav-link" href="002-tommy_index.php">Tommy</a>
+                </li>
+
                 <!-- 009 li -->
-                <li class="nav-item  <?= $activeLi == 'li' ? 'active' : '' ?>">
+                <li class="nav-item  <?=$activeLi == 'li' ? 'active' : ''?>">
                     <a class="nav-link" href="009-li.php">Li</a>
                 </li>
 
                 <!-- 019 Henry -->
-                <li class="nav-item  <?= $activeLi == 'henry' ? 'active' : '' ?>">
+                <li class="nav-item  <?=$activeLi == 'henry' ? 'active' : ''?>">
                     <a class="nav-link" href="019-henry.php">Henry</a>
                 </li>
 
                 <!-- 033 Leo -->
-                <li class="nav-item  <?= $activeLi == 'leo' ? 'active' : '' ?>">
+                <li class="nav-item  <?=$activeLi == 'leo' ? 'active' : ''?>">
                     <a class="nav-link" href="033-leo.php">Leo</a>
                 </li>
 
@@ -44,26 +49,36 @@
             <!-- right side -->
             <ul class="navbar-nav">
                 <!-- after log in,  will show up after login -->
-                <?php if (isset($_SESSION['user'])) : ?>
+                <?php if (isset($_SESSION['user'])): ?>
                     <li class="nav-item active">
-                        <a class="nav-link"><?= $_SESSION['user']['nickname'] ?></a>
+                        <a class="nav-link" ><?=$_SESSION['user']['nickname']?></a>
                     </li>
 
                     <!-- NOTE  add $activeLi ternary-->
+                    <!----------- Tommy改的部分 -------------->
                     <li class="nav-item">
-                        <a class="nav-link  <?= $activeLi == 'edit' ? 'active' : '' ?>" href="002-tommy.php">會員中心</a>
+                        <a class="nav-link  <?=$activeLi == 'edit' ? 'active' : ''?>"
+                        href="profile-edit.php">編輯個人資料</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link  <?=$activeLi == 'edit' ? 'active' : ''?>" 
+                        href="002-tommy_index.php">會員中心</a>
                     </li>
 
                     <!-- WARN the need of avatar?  -->
                     <li class="nav-item">
-                        <?php //if (!empty($_SESSION['user']['avatar'])): 
-                        ?>
-                        <!-- 我改的部分 -->
+                        <?php if (!empty($_SESSION['user']['avatar'])): ?>
+                            <img src="imgs/<?=$_SESSION['user']['avatar']?>" alt="" width="50px">
+                            <!-- 這行會影響navbar頭貼，要註解掉 -->
+                        <?php endif;?>
+
                         <?php if (empty($r['avatar'])) : ?>
                             <img src="./imgs/default_avatar.jpeg" alt="" width="50px">
                         <?php else : ?>
                             <img src="imgs/<?= $_SESSION['user']['avatar'] ?>" alt="" width="50px">
                         <?php endif; ?>
+                        <!----------- Tommy改的部分 -------------->
+
                     </li>
 
                     <!-- log out -->
@@ -77,13 +92,13 @@
                     </li>
 
                     <!-- 004 Joey -->
-                    <li class="nav-item  <?= $activeLi == 'joey' ? 'active' : '' ?>">
+                    <li class="nav-item  <?=$activeLi == 'joey' ? 'active' : ''?>">
                         <a class="nav-link" href="004-joey.php">Joey</a>
                     </li>
 
 
-                <?php else : ?>
-                    <!-- before log in -->
+                <?php else: ?>
+                <!-- before log in -->
                     <!-- log in -->
                     <li class="nav-item active">
                         <a class="nav-link" href="login.php">登入</a>
@@ -91,10 +106,16 @@
 
                     <!-- register -->
                     <!-- WARN no link -->
+                    <!----------- Tommy改的部分 -------------->
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">註冊</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="002-tommy_signup.php">註冊</a>
                     </li>
-                <?php endif; ?>
+                    <!----------- Tommy改的部分 -------------->
+
+                <?php endif;?>
             </ul>
 
         </div>

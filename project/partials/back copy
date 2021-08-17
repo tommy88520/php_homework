@@ -1,0 +1,24 @@
+<?php if (($r['orders_amount'] >= 3000)) :?>
+                <!-- 預設的大頭貼 -->
+                <img src="./imgs/L4.jpeg" alt="" width="50px">
+            <?php elseif (($r['orders_amount'] >= 2000)) :?>
+                <img src="./imgs/L3.png" alt="" width="50px">
+            <?php elseif (($r['orders_amount'] >= 3000)) :?>
+                <img src="./imgs/L2.jpeg" alt="" width="50px">
+
+            <?php else : ?>
+                <!-- 顯示原本的大頭貼 -->
+                <img src="./imgs/L1.jpeg" alt="" width="50px">
+            <?php endif; ?>
+
+
+
+
+
+            <?php if (($r['orders_amount'] <= 1000)) :?>
+                <!-- 預設的大頭貼 -->
+                <img src="./imgs/L2.jpeg" alt="" width="100px">
+            <?php else : ?>
+                <!-- 顯示原本的大頭貼 -->
+                <img src="./imgs/L3.jpeg" alt="" width="100px">
+            <?php endif; ?>

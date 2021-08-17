@@ -1,37 +1,86 @@
 <?php
 include __DIR__ . '/partials/init.php';
-$title = '修改資料';
+$title = 'Hi Tommy!!';
+$activeLi = 'tommy';
 
-$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+if (!isset($_SESSION['user'])) {
+    header('Location: index_.php');
+    exit;
+}
 
-$sql = "SELECT * FROM `members` WHERE id=$id";
+// $sql = "SELECT * FROM `members` WHERE id=" . intval($_SESSION['user']['id']);
+$sql = "SELECT `account_ranking`.*, `members`.*
+FROM `account_ranking`
+JOIN `members`
+    ON `account_ranking`.`members_id` = `members`.`id` WHERE `members`.id =". intval($_SESSION['user']['id']);
 
-//    echo $sql; exit;
 
 $r = $pdo->query($sql)->fetch();
 
+// SELECT o.members_sid, o.order_date, d.*, p.bookname
+// FROM `orders` o
+//     JOIN `order_details` d
+//         ON o.sid=d.order_sid
+//     JOIN `products` p
+//         ON p.sid=d.product_sid
+// WHERE o.sid=10
+
+// $sql2 = "SELECT * FROM members WHERE email=?";
+// $dpassword = password_verify($sql['password'], $r['password']);
+// $stmt = $pdo->prepare($sql);
+// $stmt->execute([$dpassword]);
+// $m = $stmt->fetch();
+
+
 if (empty($r)) {
-    header('Location: 002-tommy_account_list.php');
+    header('Location: index_.php');
     exit;
 }
-// echo json_encode($r, JSON_UNESCAPED_UNICODE);
 ?>
 <?php include __DIR__ . '/partials/html-head.php'; ?>
 <?php include __DIR__ . '/partials/navbar.php'; ?>
+
 <style>
-    form .form-group small {
-        color: red;
+    .basic_container {
+        width: 100%;
+    }
+
+    .mypage_outsidebar {
+        width: 30%;
+
+    }
+
+    .mypage_insidebar {
+        border: 1px solid black;
+        width: 100%;
+        height: 300px;
+    }
+
+    .mypage_main {
+        border: 1px solid black;
+        width: 65%;
+        height: 752px;
     }
 </style>
-<div class="container">
-    <div class="row">
-        <div class="col-md-6">
+<!-- <li class="nav-item">
+    <?php if (!empty($_SESSION['user']['avatar'])) : ?>
+        <img src="./imgs/default_avatar.jpeg" alt="" width="300px">
+    <?php else : ?>
+        <img src="imgs/<?= $_SESSION['user']['avatar'] ?>" alt="" width="50px">
+    <?php endif; ?>
+</li> -->
+
+<div class="container mt-3">
+
+    <div class="basic_container d-flex justify-content-between">
+        <?php include __DIR__ . '/002-tommy_mypage_bar.php'; ?>
+        <div class="mypage_main">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">修改資料</h5>
+                    <h5 class="card-title">修改個人資料</h5>
 
-                    <form name="form1" onsubmit="checkForm(); return false;">
-                    <div class="form-group">
+                    <form name="form1" onsubmit="checkForm(); return false;" action="/somewhere/to/upload" enctype="multipart/form-data">
+                        <div class="form-group">
                             <label for="avatar">大頭貼</label>
                             <input type="file" class="form-control" id="avatar" name="avatar" accept="image/*" onchange="readURL(this)" targetID="preview_img">
                             <!-- <input type="text" class="form-control" id="clean" name="clean"?>"> -->
@@ -47,12 +96,17 @@ if (empty($r)) {
                         </div>
                         <div class="form-group">
                             <label for="account">Account </label>
-                            <input type="text" class="form-control" id="account" name="account" value="<?= htmlentities($r['account']) ?>">
+                            <input type="text" class="form-control" id="account" name="account" value="<?= htmlentities($r['account']) ?>" disabled>
                             <small class="form-text "></small>
                         </div>
+                        <!-- <div class="form-group">
+                            <label for="password_o">原來的密碼</label>
+                            <input type="text" class="form-control" id="password_o" name="password_o">
+                            <small class="form-text "></small>
+                        </div> -->
                         <div class="form-group">
-                            <label for="password">Password </label>
-                            <input type="text" class="form-control" id="password" name="password" value="<?= htmlentities($r['password']) ?>">
+                            <!-- <label for="password">Password </label> -->
+                            <input type="hidden" class="form-control" id="password" name="password" value="<?= htmlentities($r['password']) ?>">
                             <small class="form-text "></small>
                         </div>
                         <div class="form-group">
@@ -92,59 +146,68 @@ if (empty($r)) {
 
                 </div>
             </div>
+
+
         </div>
     </div>
 
-
+    <!-- <h2>Hi Tommy!! <a href="002-tommy-api.php">Click me!</a> ☜(ﾟヮﾟ☜)</h2> -->
 </div>
 <?php include __DIR__ . '/partials/scripts.php'; ?>
+
 <script>
-    const email_re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    const mobile_re = /^09\d{2}-?\d{3}-?\d{3}$/;
-
-    const account = document.querySelector('#account');
-    const email = document.querySelector('#email');
-
     function checkForm() {
-        // 欄位的外觀要回復原來的狀態
-        account.nextElementSibling.innerHTML = '';
-        account.style.border = '1px #CCCCCC solid';
-        email.nextElementSibling.innerHTML = '';
-        email.style.border = '1px #CCCCCC solid';
 
-        let isPass = true;
-        if (account.value.length < 2) {
-            isPass = false;
-            account.nextElementSibling.innerHTML = '請填寫正確的姓名';
-            account.style.border = '1px red solid';
+        const fd = new FormData(document.form1);
+        fetch('002-tommy_profile-api.php', {
+                method: 'POST',
+                body: fd
+            })
+            .then(r => r.json())
+            .then(obj => {
+                console.log(obj);
+                if (obj.success) {
+                    alert('修改成功');
+                    location.href = '002-tommy_index.php';
+
+                } else {
+                    alert(obj.error);
+                }
+            })
+            .catch(error => {
+                console.log('error:', error);
+            });
+
+
+    };
+
+    function readURL(input) {
+
+        if (input.files && input.files[0]) {
+
+            var imageTagID = input.getAttribute("targetID");
+
+            var reader = new FileReader();
+
+            reader.onload = function(e) {
+
+                var img = document.getElementById(imageTagID);
+
+                img.setAttribute("src", e.target.result)
+
+            }
+
+            reader.readAsDataURL(input.files[0]);
+
         }
 
-        if (!email_re.test(email.value)) {
-            isPass = false;
-            email.nextElementSibling.innerHTML = '請填寫正確的 Email 格式';
-            email.style.border = '1px red solid';
-        }
-
-        if (isPass) {
-            const fd = new FormData(document.form1);
-            fetch('002-tommy_account_edit-api.php', {
-                    method: 'POST',
-                    body: fd
-                })
-                .then(r => r.json())
-                .then(obj => {
-                    console.log(obj);
-                    if (obj.success) {
-                        alert('修改成功'); //or boostrap的model
-                    } else {
-                        alert(obj.error);
-                    }
-                })
-                .catch(error => {
-                    console.log('error:', error);
-                });
-            
-        }
     }
+
+    // let file = document.querySelector('#avatar');
+    // let clean = document.querySelector('#clean');
+
+    // clean.addEventListener('click', (ev) => {
+    //     file.value = null;
+    // });
 </script>
 <?php include __DIR__ . '/partials/html-foot.php'; ?>
